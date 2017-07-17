@@ -51,6 +51,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.model.match.types.rev131026
 import org.opendaylight.yang.gen.v1.urn.opendaylight.model.match.types.rev131026.match.EthernetMatchBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.model.match.types.rev131026.match.layer._3.match.Ipv4MatchBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.model.match.types.rev131026.match.layer._4.match.TcpMatchBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.MeterCaseBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.meter._case.MeterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.meter.types.rev130918.MeterId;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
@@ -194,8 +197,21 @@ public class SwitchConfigurator {
 
         //TODO: WRITE YOUR CODE HERE TO SET THE METER
 
+        InstructionBuilder builder = new InstructionBuilder();
+        MeterCaseBuilder caseBuilder = new MeterCaseBuilder();
+        MeterBuilder meterBuilder = new MeterBuilder();
+        meterBuilder.setMeterId(new MeterId((long)1));
+        caseBuilder.setMeter(meterBuilder.build());
+        builder.setOrder(1);
+        builder.setInstruction(caseBuilder.build());
+        Instruction meterInstruction = builder.build();
+
+        List<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(applyActionsInstruction);
+        instructions.add(meterInstruction);
+
         Instructions applyInstructions =  new InstructionsBuilder()
-                .setInstruction(ImmutableList.of(applyActionsInstruction))
+                .setInstruction(instructions)//(ImmutableList.of(applyActionsInstruction))
                 .build();
 
         // Put our Instruction in a list of Instructions
