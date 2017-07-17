@@ -73,9 +73,32 @@ public class NodeMonitor {
 		}
 
 	}
+
 //TODO: IMPLEMENT THE METHOD TO GET ALL LINKS
 	public static List<org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Link> getAllLinks(DataBroker db) {
-		return null;
+		List<org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Link> linkList= new ArrayList<>();
+
+		try {
+			//Topology Id
+			TopologyId topoId = new TopologyId("flow:1");
+			//get the InstanceIdentifier
+			InstanceIdentifier<Topology> linksIid = InstanceIdentifier.builder(NetworkTopology.class).child(Topology.class, new TopologyKey(topoId)).toInstance();
+			ReadOnlyTransaction linksTransaction = db.newReadOnlyTransaction();
+
+			//Read from operational database
+			CheckedFuture<Optional<Topology>, ReadFailedException> linksFuture = linksTransaction
+					.read(LogicalDatastoreType.OPERATIONAL, linksIid);
+			Optional<Topology> linksOptional = linksFuture.checkedGet();
+
+			if (linksOptional != null && linksOptional.isPresent()) {
+				linkList = linksOptional.get().getLink();
+			}
+			LOG.info("Links :"+linkList);
+			return linkList;
+		} catch (Exception e) {
+			LOG.info("Link Fetching Failed");
+			return linkList;
+		}
 	}
 
 
@@ -128,6 +151,10 @@ public class NodeMonitor {
 		} catch (Exception e) {
 			LOG.error("Source node statistics reading failed:", e);
 		}
+
+		// To test if the getAllLinks() function is working. This can be seen in logs in opendaylight CLI
+		List<org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Link> links = getAllLinks(db);
+
 
 		LOG.info("Packet loss {} ", packetLoss);
 		LOG.info("Bw {} ", bw);
