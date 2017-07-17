@@ -7,5 +7,9 @@ Modifying the template as an exercise for the Technical Challenge for 5G UK work
 * Verified the execution of the task with the help of mininet and DLUX and opendaylight CLI.
 
 ## Update 2
-* Added the functionality required to accomplish task 1 of the tachnical challenge. In other words, added the Instruction with Meter ID set to 1 in the flow in SwitchConfigurator.java
+* Added the functionality required to accomplish task 1 of the technical challenge. In other words, added the Instruction with Meter ID set to 1 in the flow in SwitchConfigurator.java
 * Tested this functionality by building and running the project and simulating using using mininet and seeing the logs on opendaylight CLI. 
+
+## Update 3
+* Added the functionality required to accomplish task 4 of the technical challenge, i.e, Implemented the function getAllLinks() in NodeMonitor.java to get the information of all the links in the topology.
+* Called this function in measureNodeStatistics() so that it can be called with the help of 'reference' and 'negotiator' modules API calls in YANG UI with a mininet virtual network running in the background. Then checked the Links in the log in opendaylight CLI with this command - ```opendaylight-user@root>log:display | grep Link```
